@@ -97,7 +97,7 @@ public class UserServiceImpl extends BaseLogger implements UserService {
 
             List<RatingDto> ratingList = ratingDtos.stream().peek(ratingDto -> {
                 try {
-                    HotelDto hotelById = client.getHotelById(ratingDto.getHotelId().concat("a"));
+                    HotelDto hotelById = client.getHotelById(ratingDto.getHotelId());
                     ratingDto.setHotel(hotelById);
                 } catch (FeignException.NotFound ex) {
                     logger.error("Hotel not found with given id :{} {}", ratingDto.getHotelId(), ex.getMessage());
