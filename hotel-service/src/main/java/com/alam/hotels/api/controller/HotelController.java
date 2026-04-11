@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/hotel")
+@RequestMapping("/api/v1/hotels")
 public class HotelController {
     private HotelService hotelService;
     public HotelController(HotelService hotelService) {

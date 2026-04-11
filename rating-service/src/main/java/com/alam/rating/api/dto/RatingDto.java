@@ -18,5 +18,4 @@ public class RatingDto {
     private String hotelId;
     private double rating;
     private String feedback;
-    private HotelDto hotels;
 }
