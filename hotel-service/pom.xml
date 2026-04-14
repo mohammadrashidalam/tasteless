@@ -72,6 +72,17 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
 		</dependency>
+		<!--Spring security-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<!--Okta-->
+		<dependency>
+			<groupId>com.okta.spring</groupId>
+			<artifactId>okta-spring-boot-starter</artifactId>
+			<version>3.0.8</version>
+		</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>

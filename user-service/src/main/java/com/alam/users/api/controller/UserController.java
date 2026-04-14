@@ -7,11 +7,13 @@ import com.alam.users.api.logger.BaseLogger;
 import com.alam.users.api.service.UserService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
+import jakarta.ws.rs.GET;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -38,6 +40,7 @@ public class UserController extends BaseLogger {
 
     }
     public ResponseEntity<?> getAllUsersFallback(Throwable throwable) {
+        throwable.getStackTrace();
         if(throwable instanceof ResourceNotFoundException) {
             throw (ResourceNotFoundException) throwable;
         }
@@ -45,9 +48,9 @@ public class UserController extends BaseLogger {
                 "Hotel/Rating service is currently unavailable. Please try again later."
         );
     }
-    @CircuitBreaker(name="ratingHotelBreaker",
+   /* @CircuitBreaker(name="ratingHotelBreaker",
             fallbackMethod = "getUserByIdFallback")
-    @Retry(name="ratingHotelRetry")
+    @Retry(name="ratingHotelRetry")*/
     @GetMapping("/getUserById/{userId}")
     public ResponseEntity<?> getUserById(@PathVariable("userId") String userId) {
         logger.info("Get user by id called with userId: {}", userId);
@@ -57,11 +60,18 @@ public class UserController extends BaseLogger {
         return ResponseEntity.ok(userDto);
     }
     public ResponseEntity<?> getUserByIdFallback(String userId, Throwable throwable) {
+
         if(throwable instanceof ResourceNotFoundException) {
             throw (ResourceNotFoundException) throwable;
+        } else if (throwable instanceof  ServiceUnavailableException) {
+            throw new ServiceUnavailableException(
+                    "Hotel/Rating service is currently unavailable. Please try again later."
+            );
         }
-        throw new ServiceUnavailableException(
-                "Hotel/Rating service is currently unavailable. Please try again later."
-        );
+        throw  new RuntimeException(throwable);
+    }
+    @GetMapping("/message")
+    public String message(){
+        return "Hello world..";
     }
 }

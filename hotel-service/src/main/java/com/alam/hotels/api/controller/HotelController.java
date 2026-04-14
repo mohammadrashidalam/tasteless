@@ -4,6 +4,7 @@ import com.alam.hotels.api.dto.HotelDto;
 import com.alam.hotels.api.service.HotelService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +17,7 @@ public class HotelController {
     public HotelController(HotelService hotelService) {
         this.hotelService = hotelService;
     }
+    @PreAuthorize("hasAuthority('Admin')")
     @PostMapping("/saveHotelDetails")
     public ResponseEntity<HotelDto> saveHotelDetails(@RequestBody HotelDto hotelDto) {
         String uuid= UUID.randomUUID().toString();
@@ -23,11 +25,13 @@ public class HotelController {
         HotelDto hotelDto1 = hotelService.saveHotelDetails(hotelDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(hotelDto1);
     }
+    @PreAuthorize("hasAuthority('SCOPE_internal')")
     @GetMapping("/getAllHotels")
     public ResponseEntity<List<HotelDto>> getAllHotels() {
         List<HotelDto> hotelDtos = hotelService.findAllHotels();
         return ResponseEntity.status(HttpStatus.OK).body(hotelDtos);
     }
+    @PreAuthorize("hasAuthority('SCOPE_internal') || hasAuthority('Admin') ")
     @GetMapping("/getHotelById/{id}")
     public ResponseEntity<HotelDto> getHotelById(@PathVariable("id") String id) {
         HotelDto hotelDto = hotelService.findHotelById(id);

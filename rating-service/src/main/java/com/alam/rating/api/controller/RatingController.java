@@ -7,6 +7,7 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -20,6 +21,7 @@ public class RatingController {
         this.ratingService = ratingService;
     }
 
+    @PreAuthorize("hasAuthority('Admin') ")
     @PostMapping("/saveRating")
     public ResponseEntity<RatingDto> saveRating(@RequestBody RatingDto ratingDto) {
         String uuid= UUID.randomUUID().toString();
@@ -40,7 +42,7 @@ public class RatingController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(ratingService.getRatingById(ratingId));
     }
-
+    @PreAuthorize("hasAuthority('SCOPE_internal') || hasAuthority('Admin') ")
     @GetMapping("/users/{userId}")
     public ResponseEntity<?> getRatingByUserId(@PathVariable("userId") String userId) {
         return ResponseEntity.status(HttpStatus.OK)

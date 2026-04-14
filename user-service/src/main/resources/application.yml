@@ -19,6 +19,29 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
+
+
+
+  security:
+    oauth2:
+
+      resourceserver:
+        jwt:
+          issuer-uri: https://trial-8985060.okta.com/oauth2/default
+
+      client:
+        registration:
+          my-internal-client:
+            provider: okta
+            authorization-grant-type: client_credentials
+            scope: internal
+            client-id: 0oa11v55eedfgwBif698
+            client-secret: xAiuOfYNNCsim-KtQYcBsu24GGYzUvFsBu30lIgGokfNjR6mbI_xha57YN-g7l1w
+
+        provider:
+          okta:
+            issuer-uri: https://trial-8985060.okta.com/oauth2/default
+
 eureka:
   instances:
     prefer-ip-address: true
@@ -63,5 +86,17 @@ resilience4j:
         waitDuration: 2s
         enableExponentialBackoff: true
         exponentialBackoffMultiplier: 2
+
+
+#Okta configuration for API Gateway
+okta:
+  oauth2:
+    issuer: https://trial-8985060.okta.com/oauth2/default
+    audience: api://default
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+
 
 

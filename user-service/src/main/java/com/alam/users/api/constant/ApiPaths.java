@@ -21,4 +21,8 @@ public class ApiPaths {
     //REST TEMPLATE ENDPOINTS
     public static final String RATING_ENDPOINT=RATING_SERVICE_URI+GET_RATING_BY_USER_ID;
     public static final String HOTEL_ENDPOINT=HOTEL_SERVICE_URI+HOTEL_GET_BY_ID;
+
+    //Feign Client Interceptor Endpoints
+    public static final String AUTHORIZATION_HEADER="Authorization";
+    public static final String BEARER_TOKEN_PREFIX="Bearer ";
 }

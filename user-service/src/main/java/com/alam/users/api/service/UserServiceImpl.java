@@ -92,24 +92,30 @@ public class UserServiceImpl extends BaseLogger implements UserService {
 
     private UserDto mapRatingAndHotelData(String userId, ExternalServiceClient client, UserDto userDto) {
         logger.info("Fetching ratings for userId: {}", userId);
-        List<RatingDto> ratingDtos = client.getRatingsByUserId(userId);
-        if (!ratingDtos.isEmpty()) {
+        try {
+            List<RatingDto> ratingDtos = client.getRatingsByUserId(userId);
+            if (!ratingDtos.isEmpty()) {
 
-            List<RatingDto> ratingList = ratingDtos.stream().peek(ratingDto -> {
-                try {
-                    HotelDto hotelById = client.getHotelById(ratingDto.getHotelId());
-                    ratingDto.setHotel(hotelById);
-                } catch (FeignException.NotFound ex) {
-                    logger.error("Hotel not found with given id :{} {}", ratingDto.getHotelId(), ex.getMessage());
-                    throw new ResourceNotFoundException(" Hotel not found with given id {}" + ratingDto.getHotelId());
+                List<RatingDto> ratingList = ratingDtos.stream().peek(ratingDto -> {
+                    try {
+                        HotelDto hotelById = client.getHotelById(ratingDto.getHotelId());
+                        ratingDto.setHotel(hotelById);
+                    } catch (FeignException.NotFound ex) {
+                        logger.error("Hotel not found with given id :{} {}", ratingDto.getHotelId(), ex.getMessage());
+                        throw new ResourceNotFoundException(" Hotel not found with given id {}" + ratingDto.getHotelId());
 
-                } catch (Exception ex) {
-                    logger.error("Error fetching ratings or hotel details for userId: {}{}", ratingDto.getHotelId(), ex.getMessage());
-                    throw new RuntimeException("Failed to fetch ratings or hotel details", ex);
-                }
-            }).toList();
-            userDto.setRatings(ratingList);
+                    } catch (Exception ex) {
+                        ex.getStackTrace();
+                        logger.error("Error fetching ratings or hotel details for userId: {}{}", ratingDto.getHotelId(), ex.getMessage());
+                        throw new RuntimeException("Failed to fetch ratings or hotel details", ex);
+                    }
+                }).toList();
+                userDto.setRatings(ratingList);
 
+            }
+        } catch (Exception e) {
+            e.getStackTrace();
+            throw new RuntimeException(e);
         }
         return userDto;
     }
