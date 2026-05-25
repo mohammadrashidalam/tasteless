@@ -4,6 +4,11 @@ spring:
   application:
     name: api-gateway
 
+
+  data.redis:
+    host: localhost
+    port: 6379
+
   cloud:
     gateway:
       server:
@@ -13,14 +18,34 @@ spring:
               uri: lb://USER-SERVICE
               predicates:
                 - Path=/api/v1/user/**
+              filters:
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 5
+                    redis-rate-limiter.burstCapacity: 10
+                    key-resolver: "#{@userKeyResolver}"
+
             - id: HOTEL-SERVICE
               uri: lb://HOTEL-SERVICE
               predicates:
                 - Path=/api/v1/hotels/**
+              filters:
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 3
+                    redis-rate-limiter.burstCapacity: 6
+                    key-resolver: "#{@userKeyResolver}"
+
             - id: RATING-SERVICE
               uri: lb://RATING-SERVICE
               predicates:
                 - Path=/api/v1/ratings/**
+              filters:
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 2
+                    redis-rate-limiter.burstCapacity: 4
+                    key-resolver: "#{@userKeyResolver}"
 
 
 logging:
